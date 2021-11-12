@@ -3,13 +3,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class HydroplaneForm {
-    private JButton createButton;
+    private JButton createPlaneButton;
+    private JButton createHydroplaneButton;
     private JButton upButton;
     private JButton leftButton;
     private JButton rightButton;
     private JButton downButton;
-    private JComboBox<Integer> choiceButton;
-    private Hydroplane hydroplane;
+    private JComboBox<String> choiceCountFloatButton;
+    private JComboBox<String> choiceAddingButton;
+    private Transport transport;
     private JFrame frame;
     private DrawPicture draw;
 
@@ -17,16 +19,16 @@ public class HydroplaneForm {
         String temp = button.getName();
         switch (temp) {
             case "Up":
-                hydroplane.moveTrans(Direction.Up);
+                transport.moveTransport(Direction.Up);
                 break;
             case "Down":
-                hydroplane.moveTrans(Direction.Down);
+                transport.moveTransport(Direction.Down);
                 break;
             case "Left":
-                hydroplane.moveTrans(Direction.Left);
+                transport.moveTransport(Direction.Left);
                 break;
             case "Right":
-                hydroplane.moveTrans(Direction.Right);
+                transport.moveTransport(Direction.Right);
                 break;
         }
         frame.repaint();
@@ -57,26 +59,30 @@ public class HydroplaneForm {
         leftButton.setBounds(750, 350, 30, 30);
         leftButton.addActionListener(e -> direction(leftButton));
 
-        upButton.setEnabled(false);
-        downButton.setEnabled(false);
-        rightButton.setEnabled(false);
-        leftButton.setEnabled(false);
-        createButton = new JButton("Создать");
-        createButton.setBounds(0, 0, 90, 30);
-        createButton.addActionListener(e -> {
-            hydroplane = new Hydroplane(100 + ((int) (Math.random() * 300)), 1000 + ((int) (Math.random() * 2000)), Color.BLACK,
-                    Color.YELLOW, false, false, false, choiceButton.getSelectedIndex() + 2 + choiceButton.getSelectedIndex());
-            hydroplane.setPosition(10 + ((int) (Math.random() * 100)), 10 + ((int) (Math.random() * 100)), 900, 500);
-            upButton.setEnabled(true);
-            downButton.setEnabled(true);
-            rightButton.setEnabled(true);
-            leftButton.setEnabled(true);
-            draw.setPlane(hydroplane);
+        createPlaneButton = new JButton("Создать самолёт");
+        createPlaneButton.setBounds(0, 0, 150, 30);
+        createPlaneButton.addActionListener(e -> {
+            transport = new Plane(100 + ((int) (Math.random() * 300)), 1000 + ((int) (Math.random() * 2000)), Color.BLACK);
+            transport.setPosition(10 + ((int) (Math.random() * 100)), 10 + ((int) (Math.random() * 100)), 900, 500);
+            draw.setTransport(transport);
             frame.repaint();
         });
 
-        choiceButton = new JComboBox<>(new Integer[]{2, 4, 6});
-        choiceButton.setBounds(100, 0, 90, 30);
+        createHydroplaneButton = new JButton("Создать гидроплан");
+        createHydroplaneButton.setBounds(170, 0, 150, 30);
+        createHydroplaneButton.addActionListener(e -> {
+            transport = new Hydroplane(100 + ((int) (Math.random() * 300)), 1000 + ((int) (Math.random() * 2000)), Color.GREEN, Color.BLUE, true, true, true,
+                      choiceAddingButton.getSelectedIndex(), choiceCountFloatButton.getSelectedIndex());
+            transport.setPosition(10 + ((int) (Math.random() * 100)), 10 + ((int) (Math.random() * 100)), 900, 500);
+            draw.setTransport(transport);
+            frame.repaint();
+        });
+
+        choiceAddingButton = new JComboBox<>(new String[]{"Круглые", "Прямоугольные", "Треугольные"});
+        choiceAddingButton.setBounds(350, 0, 80, 30);
+
+        choiceCountFloatButton =  new JComboBox<>(new String[]{"2 поплавка", "4 поплавка", "6 поплавков"});
+        choiceCountFloatButton.setBounds(450, 0, 80, 30);
     }
 
     public HydroplaneForm() {
@@ -87,12 +93,14 @@ public class HydroplaneForm {
         frame.setVisible(true);
         frame.setResizable(false);
         initialization();
-        frame.getContentPane().add(createButton);
+        frame.getContentPane().add(createPlaneButton);
+        frame.getContentPane().add(createHydroplaneButton);
         frame.getContentPane().add(upButton);
         frame.getContentPane().add(downButton);
         frame.getContentPane().add(leftButton);
         frame.getContentPane().add(rightButton);
-        frame.getContentPane().add(choiceButton);
+        frame.getContentPane().add(choiceAddingButton);
+        frame.getContentPane().add(choiceCountFloatButton);
         frame.getContentPane().add(draw);
         draw.setBounds(0, 0, 900, 500);
         frame.repaint();

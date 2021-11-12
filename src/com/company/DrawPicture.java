@@ -1,21 +1,24 @@
 package com.company;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class DrawPicture extends JPanel{
-    private Hydroplane hydroplane;
+public class DrawPicture extends JPanel {
+
+    private Transport transport;
 
     public void paintComponent(Graphics g) {
-        if (hydroplane != null) {
-            hydroplane.drawPicture(g);
+        if (transport != null) {
+            transport.draw(g);
         }
     }
 
-    public void setPlane(Hydroplane pl) {
-        this.hydroplane = pl;
+    public void setTransport(Transport transport) {
+        this.transport = transport;
     }
 
-    public Hydroplane getPlane() {
-        return hydroplane;
+    public Transport getCar() {
+        return transport;
     }
+
 }

@@ -6,14 +6,14 @@ public enum FloatCount {
     four,
     six;
 
-    public static FloatCount getcount(int count)
+    public static FloatCount getCount(int count)
     {
         switch (count) {
-            case 2:
+            case 0:
                 return two;
-            case 4:
+            case 1:
                 return four;
-            case 6:
+            case 2:
                 return six;
         }
         return null;
