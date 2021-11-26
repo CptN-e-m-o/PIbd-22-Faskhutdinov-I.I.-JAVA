@@ -4,7 +4,6 @@ import java.awt.*;
 public class Float {
 
     private static FloatCount count;
-    //private FloatCount count;
 
     public void setNumber(int number) {
         count = FloatCount.getcount(number);
