@@ -22,6 +22,7 @@ public abstract class Vehicle implements Transport {
 
     public Color mainColor;
 
+
     public void setPosition(int x, int y, int width, int height) {
         if (x >= 0 && x + vehicleWight < width && y >= 0 && y + vehicleHeight < height) {
             startPosX = x;

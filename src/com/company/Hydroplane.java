@@ -46,17 +46,21 @@ public class Hydroplane extends Plane{
 
     public Hydroplane(int maxSpeed, float weight, Color mainColor, Color dopColor, boolean frontFloat, boolean sideFloat, boolean backFloat,int add, int number) {
         super(maxSpeed, weight, mainColor, 100, 100);
-        this.maxSpeed = maxSpeed;
-        this.weight = weight;
-        this.mainColor = mainColor;
+
         this.dopColor = dopColor;
         this.FrontFloat = frontFloat;
         this.SideFloat = sideFloat;
         this.BackFloat = backFloat;
         switch (add) {
-            case 0 -> adding = new FloatCircle(number);
-            case 1 -> adding = new FloatRectangle(number);
-            case 2 -> adding = new FloatTriangle(number);
+            case 0:
+                adding = new FloatCircle(number);
+                break;
+            case 1:
+                adding = new FloatRectangle(number);
+                break;
+            case 2:
+                adding = new FloatTriangle(number);
+                break;
         }
     }
 
@@ -64,6 +68,6 @@ public class Hydroplane extends Plane{
         g.setColor(Color.RED);
         g.fillRect(startPosX + 70, startPosY + 5, PlaneWidth - 92, PlaneHeight - 85);
         super.draw(g);
-        adding.draw(g, startPosX, startPosY, PlaneWidth, PlaneHeight);
+        adding.draw(g, startPosX, startPosY, PlaneWidth, PlaneHeight, dopColor);
     }
 }

@@ -16,12 +16,12 @@ public class FloatRectangle implements Adding {
     }
 
     @Override
-    public void draw(Graphics g, int startPosX, int startPosY, int planeWidth, int planeHeight) {
+    public void draw(Graphics g, int startPosX, int startPosY, int planeWidth, int planeHeight, Color Dopcolor) {
         if (floatcount == FloatCount.two || floatcount == FloatCount.four || floatcount == FloatCount.six) {
             g.setColor(Color.BLACK);
             g.drawLine(startPosX + 90, startPosY + 20, startPosX + 90, startPosY + 30);
             g.drawLine(startPosX + 95, startPosY + 18, startPosX + 95, startPosY + 28);
-            g.setColor(Color.ORANGE);
+            g.setColor(Dopcolor);
             g.fillRect(startPosX + 85, startPosY + 30, 12,8);
             g.fillRect(startPosX + 90, startPosY + 28, 12,8);
             g.setColor(Color.BLACK);
@@ -32,7 +32,7 @@ public class FloatRectangle implements Adding {
             g.setColor(Color.BLACK);
             g.drawLine(startPosX + 50, startPosY + 20, startPosX + 50, startPosY + 30);
             g.drawLine(startPosX + 70, startPosY + 20, startPosX + 70, startPosY + 30);
-            g.setColor(Color.ORANGE);
+            g.setColor(Dopcolor);
             g.fillRect(startPosX + 45, startPosY + 30, 12,8);
             g.fillRect(startPosX + 65, startPosY + 30, 12,8);
             g.setColor(Color.BLACK);
@@ -43,7 +43,7 @@ public class FloatRectangle implements Adding {
             g.setColor(Color.BLACK);
             g.drawLine(startPosX + 25, startPosY + 20, startPosX + 25, startPosY + 30);
             g.drawLine(startPosX + 15, startPosY + 20, startPosX + 15, startPosY + 30);
-            g.setColor(Color.ORANGE);
+            g.setColor(Dopcolor);
             g.fillRect(startPosX + 20, startPosY + 30, 12,8);
             g.fillRect(startPosX + 10, startPosY + 30, 12,8);
             g.setColor(Color.BLACK);

@@ -16,7 +16,7 @@ public class FloatTriangle implements Adding {
     }
 
     @Override
-    public void draw(Graphics g, int startPosX, int startPosY, int planeWidth, int planeHeight) {
+    public void draw(Graphics g, int startPosX, int startPosY, int planeWidth, int planeHeight, Color Dopcolor) {
         if (floatcount == FloatCount.two || floatcount == FloatCount.four || floatcount == FloatCount.six) {
             g.setColor(Color.BLACK);
             g.drawLine(startPosX + 90, startPosY + 20, startPosX + 90, startPosY + 30);
@@ -31,7 +31,7 @@ public class FloatTriangle implements Adding {
             hydrF_points_y[0] = startPosY + 28;
             hydrF_points_y[1] = startPosY + 28;
             hydrF_points_y[2] = startPosY + 33;
-            g.setColor(Color.PINK);
+            g.setColor(Dopcolor);
             g.fillPolygon(hydrF_points_x,hydrF_points_y, 3);
             g.setColor(Color.BLACK);
             g.drawPolygon(hydrF_points_x, hydrF_points_y, 3);
@@ -42,7 +42,7 @@ public class FloatTriangle implements Adding {
             hydrF_points_y[0] = startPosY + 30;
             hydrF_points_y[1] = startPosY + 30;
             hydrF_points_y[2] = startPosY + 35;
-            g.setColor(Color.PINK);
+            g.setColor(Dopcolor);
             g.fillPolygon(hydrF_points_x,hydrF_points_y, 3);
             g.setColor(Color.BLACK);
             g.drawPolygon(hydrF_points_x, hydrF_points_y, 3);
@@ -61,7 +61,7 @@ public class FloatTriangle implements Adding {
             hydrF_points_y[0] = startPosY + 30;
             hydrF_points_y[1] = startPosY + 30;
             hydrF_points_y[2] = startPosY + 35;
-            g.setColor(Color.PINK);
+            g.setColor(Dopcolor);
             g.fillPolygon(hydrF_points_x,hydrF_points_y, 3);
             g.setColor(Color.BLACK);
             g.drawPolygon(hydrF_points_x, hydrF_points_y, 3);
@@ -72,7 +72,7 @@ public class FloatTriangle implements Adding {
             hydrF_points_y[0] = startPosY + 30;
             hydrF_points_y[1] = startPosY + 30;
             hydrF_points_y[2] = startPosY + 35;
-            g.setColor(Color.PINK);
+            g.setColor(Dopcolor);
             g.fillPolygon(hydrF_points_x,hydrF_points_y, 3);
             g.setColor(Color.BLACK);
             g.drawPolygon(hydrF_points_x, hydrF_points_y, 3);
@@ -90,7 +90,7 @@ public class FloatTriangle implements Adding {
             hydrF_points_y[0] = startPosY + 30;
             hydrF_points_y[1] = startPosY + 30;
             hydrF_points_y[2] = startPosY + 35;
-            g.setColor(Color.PINK);
+            g.setColor(Dopcolor);
             g.fillPolygon(hydrF_points_x,hydrF_points_y, 3);
             g.setColor(Color.BLACK);
             g.drawPolygon(hydrF_points_x, hydrF_points_y, 3);
@@ -101,7 +101,7 @@ public class FloatTriangle implements Adding {
             hydrF_points_y[0] = startPosY + 30;
             hydrF_points_y[1] = startPosY + 30;
             hydrF_points_y[2] = startPosY + 35;
-            g.setColor(Color.PINK);
+            g.setColor(Dopcolor);
             g.fillPolygon(hydrF_points_x,hydrF_points_y, 3);
             g.setColor(Color.BLACK);
             g.drawPolygon(hydrF_points_x, hydrF_points_y, 3);
