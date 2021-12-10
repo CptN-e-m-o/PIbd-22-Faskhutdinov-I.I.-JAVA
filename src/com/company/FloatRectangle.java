@@ -2,7 +2,7 @@ package com.company;
 
 import java.awt.*;
 
-public class FloatRectangle implements Adding {
+public class FloatRectangle implements IAdding {
 
     private FloatCount floatcount;
 

@@ -1,12 +1,13 @@
 package com.company;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class AirfieldCollection {
 
-    private final Map<String, Airfield<Transport, Adding>> AirfieldStages;
+    private final Map<String, Airfield<ITransport, IAdding>> AirfieldStages;
 
     private final int pictureWidth;
 
@@ -33,14 +34,14 @@ public class AirfieldCollection {
         AirfieldStages.remove(name);
     }
 
-    public Airfield<Transport, Adding> get(String name) {
+    public Airfield<ITransport, IAdding> get(String name) {
         if (AirfieldStages.containsKey(name)) {
             return AirfieldStages.get(name);
         }
         return null;
     }
 
-    public Transport get(String name, int index) {
+    public ITransport get(String name, int index) {
         if (AirfieldStages.containsKey(name)) {
             return AirfieldStages.get(name).get(index);
         }

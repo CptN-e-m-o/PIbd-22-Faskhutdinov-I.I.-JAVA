@@ -9,7 +9,7 @@ public class HydroplaneForm {
     private JButton rightButton;
     private JButton downButton;
 
-    private Transport transport;
+    private ITransport transport;
     private JFrame frame;
     private DrawPicture draw;
 
@@ -62,6 +62,7 @@ public class HydroplaneForm {
         draw = new DrawPicture();
         frame = new JFrame("Гидроплан");
         frame.setSize(900, 500);
+        //frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
         initialization();
@@ -74,7 +75,7 @@ public class HydroplaneForm {
         frame.repaint();
     }
 
-    public void setPlane(Transport transport) {
+    public void setPlane(ITransport transport) {
         this.transport = transport;
         draw.setTransport(transport);
         frame.repaint();

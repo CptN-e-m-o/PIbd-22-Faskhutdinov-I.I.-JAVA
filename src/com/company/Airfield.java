@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Airfield<T extends Transport, G extends Adding> {
+public class Airfield<T extends ITransport, G extends IAdding> {
 
     private final List<T> places;
 
@@ -58,6 +58,23 @@ public class Airfield<T extends Transport, G extends Adding> {
                     pictureWidth, pictureHeight);
             places.get(i).draw(g);
         }
+    }
+
+    public boolean equal(int count) {
+        int countPlaces = 0;
+        for (Object object : places) {
+            if (object != null) {
+                countPlaces++;
+            }
+        }
+        return countPlaces == count;
+    }
+
+    public boolean inequal(int count) {
+        if (equal(count)) {
+            return true;
+        }
+        return false;
     }
 
     private void drawMarking(Graphics g) {

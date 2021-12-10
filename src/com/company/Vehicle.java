@@ -2,7 +2,7 @@ package com.company;
 
 import java.awt.*;
 
-public abstract class Vehicle implements Transport {
+public abstract class Vehicle implements ITransport {
 
     protected int startPosX;
 
@@ -56,7 +56,7 @@ public abstract class Vehicle implements Transport {
         return mainColor;
     }
 
-    protected void setMainColor(Color mainColor) {
+    public void setMainColor(Color mainColor) {
         this.mainColor = mainColor;
     }
 }

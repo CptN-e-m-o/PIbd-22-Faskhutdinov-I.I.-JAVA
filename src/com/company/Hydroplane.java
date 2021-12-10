@@ -6,7 +6,7 @@ public class Hydroplane extends Plane{
     public boolean FrontFloat;
     public boolean SideFloat;
     public boolean BackFloat;
-    private Adding adding;
+    private IAdding adding;
 
 
 
@@ -44,9 +44,20 @@ public class Hydroplane extends Plane{
         this.BackFloat = BackFloat;
     }
 
+    public void setDopColor(Color dopColor) {
+        this.dopColor = dopColor;
+    }
+    public IAdding getAdding() {
+        return adding;
+    }
+
+    public void setAdding(IAdding adding) {
+        this.adding = adding;
+    }
+
     public Hydroplane(int maxSpeed, float weight, Color mainColor, Color dopColor, boolean frontFloat, boolean sideFloat, boolean backFloat,int add, int number) {
         super(maxSpeed, weight, mainColor, 100, 100);
-
+        this.mainColor = mainColor;
         this.dopColor = dopColor;
         this.FrontFloat = frontFloat;
         this.SideFloat = sideFloat;
@@ -68,6 +79,8 @@ public class Hydroplane extends Plane{
         g.setColor(Color.RED);
         g.fillRect(startPosX + 70, startPosY + 5, PlaneWidth - 92, PlaneHeight - 85);
         super.draw(g);
-        adding.draw(g, startPosX, startPosY, PlaneWidth, PlaneHeight, dopColor);
+        if (adding != null) {
+            adding.draw(g, startPosX, startPosY, PlaneWidth, PlaneHeight, dopColor);
+        }
     }
 }

@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class DrawPicture extends JPanel {
 
-    private Transport transport;
+    private ITransport transport;
 
     public void paintComponent(Graphics g) {
         if (transport != null) {
@@ -13,11 +13,11 @@ public class DrawPicture extends JPanel {
         }
     }
 
-    public void setTransport(Transport transport) {
+    public void setTransport(ITransport transport) {
         this.transport = transport;
     }
 
-    public Transport getCar() {
+    public ITransport getPlane() {
         return transport;
     }
 

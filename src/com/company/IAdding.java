@@ -2,7 +2,7 @@ package com.company;
 
 import java.awt.*;
 
-public interface Adding {
+public interface IAdding {
 
     void setDigit(int number);
 

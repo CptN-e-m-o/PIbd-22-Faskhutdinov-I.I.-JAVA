@@ -2,7 +2,7 @@ package com.company;
 
 import java.awt.*;
 
-public class FloatCircle implements Adding {
+public class FloatCircle implements IAdding {
 
     private FloatCount floatcount;
 
