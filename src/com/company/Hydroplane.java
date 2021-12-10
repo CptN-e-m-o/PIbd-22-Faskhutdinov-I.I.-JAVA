@@ -62,16 +62,30 @@ public class Hydroplane extends Plane{
         this.FrontFloat = frontFloat;
         this.SideFloat = sideFloat;
         this.BackFloat = backFloat;
-        switch (add) {
-            case 0:
-                adding = new FloatCircle(number);
-                break;
-            case 1:
-                adding = new FloatRectangle(number);
-                break;
-            case 2:
-                adding = new FloatTriangle(number);
-                break;
+    }
+
+    public Hydroplane(String info) {
+        super("");
+        String[] strs = info.split(separator);
+        if (strs.length == 8) {
+            maxSpeed = Integer.parseInt(strs[0]);
+            weight = Float.parseFloat(strs[1]);
+            mainColor = Color.decode(strs[2]);
+            dopColor = Color.decode(strs[3]);
+            FrontFloat = Boolean.parseBoolean(strs[4]);
+            SideFloat = Boolean.parseBoolean(strs[5]);
+            BackFloat = Boolean.parseBoolean(strs[6]);
+            if (strs[7].contains("null")) {
+                adding = null;
+            } else {
+                String[] argsAddition = strs[7].split("\\.");
+                int digit = Integer.parseInt(argsAddition[1]);
+                switch (argsAddition[0]) {
+                    case "FloatCircle" -> adding = new FloatCircle(digit);
+                    case "FloatTriangle" -> adding = new FloatTriangle(digit);
+                    case "FloatRectangle" -> adding = new FloatRectangle(digit);
+                }
+            }
         }
     }
 
@@ -82,5 +96,11 @@ public class Hydroplane extends Plane{
         if (adding != null) {
             adding.draw(g, startPosX, startPosY, PlaneWidth, PlaneHeight, dopColor);
         }
+    }
+
+    @Override
+    public String toString() {
+        return maxSpeed + separator + weight + separator + mainColor.getRGB() + separator + dopColor.getRGB() + separator
+                + FrontFloat + separator + SideFloat + separator + BackFloat + separator + adding;
     }
 }

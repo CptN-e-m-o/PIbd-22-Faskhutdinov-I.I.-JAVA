@@ -107,4 +107,9 @@ public class FloatTriangle implements IAdding {
             g.drawPolygon(hydrF_points_x, hydrF_points_y, 3);
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '.' + floatcount.ordinal();
+    }
 }

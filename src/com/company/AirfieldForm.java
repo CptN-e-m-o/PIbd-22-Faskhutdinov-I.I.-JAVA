@@ -2,10 +2,13 @@ package com.company;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class AirfieldForm {
+    private Queue<Plane> queueTransport;
+    private AirfieldCollection airfieldCollection;
     private JFrame frame;
     private JButton parkTransport;
     private JButton takeTransport;
@@ -24,11 +27,13 @@ public class AirfieldForm {
     private Border borderTake;
     private Border borderAirfields;
     private DefaultListModel<String> airfieldsList;
-
-    private Queue<Plane> queueTransport;
-
-
-    private AirfieldCollection airfieldCollection;
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenu campFileMenu;
+    private JMenuItem saveFile;
+    private JMenuItem loadFile;
+    private JMenuItem saveCamp;
+    private JMenuItem loadCamp;
 
     public AirfieldForm() {
         initialization();
@@ -42,20 +47,20 @@ public class AirfieldForm {
         frame.getContentPane().add(groupBoxTake);
         frame.getContentPane().add(drawAirfields);
         frame.getContentPane().add(airfieldsGroupBox);
+        frame.setJMenuBar(menuBar);
         frame.repaint();
     }
 
     public void initialization() {
         queueTransport = new LinkedList<>();
-
         airfieldCollection = new AirfieldCollection(890, 525);
         drawAirfields = new DrawAirfields(airfieldCollection);
         borderTake = BorderFactory.createTitledBorder("Забрать транспорт");
         borderAirfields = BorderFactory.createTitledBorder("Стоянки");
         parkTransport = new JButton("Припарковать транспорт");
         putTransportIntoQueue = new JButton("Поместить в список");
-        addAirfield = new JButton("Добавить аэродром");
-        deleteAirfield = new JButton("Удалить аэродром");
+        addAirfield = new JButton("Добавить стоянку");
+        deleteAirfield = new JButton("Удалить стоянку");
         placeTransport = new JTextField();
         countPlaceTransport = new JTextField();
         takeTransport = new JButton("Забрать из списка");
@@ -74,19 +79,13 @@ public class AirfieldForm {
         parkTransport.addActionListener(e -> {
             createTransport();
         });
-
-
         groupBoxTake.setBounds(880, 110, 250, 160);
         placeText.setBounds(90, 20, 60, 30);
         placeTransport.setBounds(135, 20, 30, 30);
         putTransportIntoQueue.setBounds(40, 70, 170, 30);
-
-
         putTransportIntoQueue.addActionListener(e -> {
             placeIntoQueueTransport();
         });
-
-
         takeTransport.setBounds(40, 110, 170, 30);
         takeTransport.addActionListener(e -> {
             takeTransportFrame();
@@ -116,6 +115,32 @@ public class AirfieldForm {
         airfieldsGroupBox.add(deleteAirfield);
         placeCountText.setBounds(40, 20, 60, 30);
         countPlaceTransport.setBounds(85, 20, 30, 30);
+
+        menuBar = new JMenuBar();
+        fileMenu = new JMenu("Файл");
+        saveFile = new JMenuItem("Сохранить");
+        saveFile.addActionListener(e -> {
+            saveFile();
+        });
+        loadFile = new JMenuItem("Загрузить");
+        loadFile.addActionListener(e -> {
+            loadFile();
+        });
+        campFileMenu = new JMenu("Стоянка");
+        saveCamp = new JMenuItem("Сохранить");
+        saveCamp.addActionListener(e -> {
+            saveCamp();
+        });
+        loadCamp = new JMenuItem("Загрузить");
+        loadCamp.addActionListener(e -> {
+            loadCamp();
+        });
+        fileMenu.add(saveFile);
+        fileMenu.add(loadFile);
+        campFileMenu.add(saveCamp);
+        campFileMenu.add(loadCamp);
+        menuBar.add(fileMenu);
+        menuBar.add(campFileMenu);
     }
 
     private void createTransport() {
@@ -134,11 +159,7 @@ public class AirfieldForm {
         }
     }
 
-
-
-
-    private void placeIntoQueueTransport()
-    {
+    private void placeIntoQueueTransport() {
         if (listBoxAirfields.getSelectedIndex() >= 0) {
             if (!placeTransport.getText().equals("")) {
                 try {
@@ -204,15 +225,72 @@ public class AirfieldForm {
         frame.repaint();
     }
 
-
-
     private void takeTransportFrame() {
         if (!queueTransport.isEmpty()) {
             HydroplaneForm hydroplaneForm = new HydroplaneForm();
             hydroplaneForm.setPlane(queueTransport.remove());
             frame.repaint();
         }
+
     }
 
+    private void saveFile() {
+        JFileChooser fileSaveDialog = new JFileChooser();
+        fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileSaveDialog.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (airfieldCollection.saveData(fileSaveDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 
+    private void loadFile() {
+        JFileChooser fileOpenDialog = new JFileChooser();
+        fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileOpenDialog.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (airfieldCollection.loadData(fileOpenDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                reloadLevels();
+                frame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void saveCamp() {
+        JFileChooser fileSaveDialog = new JFileChooser();
+        fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        if (listBoxAirfields.getSelectedValue() == null) {
+            JOptionPane.showMessageDialog(frame, "Выберите стоянку", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int result = fileSaveDialog.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (airfieldCollection.saveCamp(fileSaveDialog.getSelectedFile().getPath(), listBoxAirfields.getSelectedValue())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void loadCamp() {
+        JFileChooser fileOpenDialog = new JFileChooser();
+        fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileOpenDialog.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (airfieldCollection.loadCamp(fileOpenDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                reloadLevels();
+                frame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }

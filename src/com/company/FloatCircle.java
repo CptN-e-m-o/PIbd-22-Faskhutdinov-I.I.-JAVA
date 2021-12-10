@@ -51,4 +51,9 @@ public class FloatCircle implements IAdding {
             g.drawOval(startPosX + 10, startPosY + 30, 12,8);
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '.' + floatcount.ordinal();
+    }
 }

@@ -28,7 +28,6 @@ public class Airfield<T extends ITransport, G extends IAdding> {
     }
 
     public boolean add(T vehicle) {
-
         if (places.size() < maxCount) {
             places.add(vehicle);
             return true;
@@ -46,8 +45,6 @@ public class Airfield<T extends ITransport, G extends IAdding> {
     }
 
 
-
-
     public void draw(Graphics g) {
         int width = pictureWidth / placeSizeWidth;
         int height = pictureHeight / placeSizeHeight;
@@ -60,22 +57,6 @@ public class Airfield<T extends ITransport, G extends IAdding> {
         }
     }
 
-    public boolean equal(int count) {
-        int countPlaces = 0;
-        for (Object object : places) {
-            if (object != null) {
-                countPlaces++;
-            }
-        }
-        return countPlaces == count;
-    }
-
-    public boolean inequal(int count) {
-        if (equal(count)) {
-            return true;
-        }
-        return false;
-    }
 
     private void drawMarking(Graphics g) {
         g.setColor(Color.BLACK);
@@ -96,5 +77,9 @@ public class Airfield<T extends ITransport, G extends IAdding> {
             return places.get(index);
         }
         return null;
+    }
+
+    public void clear() {
+        places.clear();
     }
 }
