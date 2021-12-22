@@ -105,7 +105,7 @@ public class AirfieldCollection {
         return true;
     }
 
-    public boolean saveCamp(String filename, String key) {
+    public boolean saveAirfield(String filename, String key) {
         if (!filename.contains(".txt")) {
             filename += ".txt";
         }
@@ -130,7 +130,7 @@ public class AirfieldCollection {
         return true;
     }
 
-    public void loadCamp(String filename) throws IOException, AirfieldOverflowException {
+    public void loadAirfield(String filename) throws IOException, AirfieldOverflowException {
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("Файл " + filename + " не найден");
         }
@@ -139,7 +139,7 @@ public class AirfieldCollection {
             String key;
             String line;
             line = scanner.nextLine();
-            if (line.contains("Camp:")) {
+            if (line.contains("A:")) {
                 key = line.split(separator)[1];
                 if (airfieldStages.containsKey(key)) {
                     airfieldStages.get(key).clear();
