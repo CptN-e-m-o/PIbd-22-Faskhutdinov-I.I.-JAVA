@@ -1,9 +1,7 @@
 package com.company;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.security.KeyException;
 import java.util.*;
 
 public class AirfieldCollection {
@@ -68,7 +66,7 @@ public class AirfieldCollection {
         return true;
     }
 
-    public boolean loadData(String filename) {
+    public boolean loadData(String filename) throws IOException, AirfieldOverflowException {
         if (!(new File(filename).exists())) {
             return false;
         }
@@ -132,13 +130,16 @@ public class AirfieldCollection {
         return true;
     }
 
-    public boolean loadCamp(String filename) {
+    public void loadCamp(String filename) throws IOException, AirfieldOverflowException {
+        if (!(new File(filename).exists())) {
+            throw new FileNotFoundException("Файл " + filename + " не найден");
+        }
         try (FileReader fileReader = new FileReader(filename)) {
             Scanner scanner = new Scanner(fileReader);
             String key;
             String line;
             line = scanner.nextLine();
-            if (line.contains("Airfield:")) {
+            if (line.contains("Camp:")) {
                 key = line.split(separator)[1];
                 if (airfieldStages.containsKey(key)) {
                     airfieldStages.get(key).clear();
@@ -146,26 +147,23 @@ public class AirfieldCollection {
                     airfieldStages.put(key, new Airfield<>(pictureWidth, pictureHeight));
                 }
             } else {
-                return false;
+                throw new IllegalArgumentException("Неверный формат файла");
             }
-            ITransport transport = null;
+            ITransport vehicle = null;
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
                 if (line.contains(separator)) {
                     if (line.contains("Plane")) {
-                        transport = new Plane(line.split(separator)[1]);
+                        vehicle = new Plane(line.split(separator)[1]);
                     } else if (line.contains("Hydroplane")) {
-                        transport = new Hydroplane(line.split(separator)[1]);
+                        vehicle = new Hydroplane(line.split(separator)[1]);
                     }
-                    if (!(airfieldStages.get(key).add(transport))) {
-                        return false;
+                    if (!(airfieldStages.get(key).add(vehicle))) {
+                        throw new AirfieldOverflowException();
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
     public ITransport get(String name, int index) {
