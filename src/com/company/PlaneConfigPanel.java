@@ -58,7 +58,7 @@ public class PlaneConfigPanel extends JDialog {
                         e.getX() + ((JComponent) e.getSource()).getX() + panelTypeOfTransport.getX() <= drawPicture.getX() + drawPicture.getWidth() &&
                         e.getY() + ((JComponent) e.getSource()).getY() + panelTypeOfTransport.getY() >= drawPicture.getY() &&
                         e.getY() + ((JComponent) e.getSource()).getY() + panelTypeOfTransport.getY() <= drawPicture.getY() + drawPicture.getHeight()) {
-                    transport.setPosition(10, 0, drawPicture.getWidth(), drawPicture.getHeight());
+                    transport.setPosition(100, 50, drawPicture.getWidth(), drawPicture.getHeight());
                     drawPicture.setTransport(transport);
                     repaint();
                 }

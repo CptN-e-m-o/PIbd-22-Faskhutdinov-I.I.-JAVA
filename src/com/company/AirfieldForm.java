@@ -1,14 +1,22 @@
 package com.company;
 
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Queue;
+
 
 public class AirfieldForm {
     private Queue<Plane> queueTransport;
     private AirfieldCollection airfieldCollection;
+
     private JFrame frame;
     private JButton parkTransport;
     private JButton takeTransport;
@@ -29,11 +37,12 @@ public class AirfieldForm {
     private DefaultListModel<String> airfieldsList;
     private JMenuBar menuBar;
     private JMenu fileMenu;
-    private JMenu campFileMenu;
+    private JMenu airfieldFileMenu;
     private JMenuItem saveFile;
     private JMenuItem loadFile;
-    private JMenuItem saveCamp;
-    private JMenuItem loadCamp;
+    private JMenuItem saveAirfield;
+    private JMenuItem loadAirfield;
+    private Logger logger;
 
     public AirfieldForm() {
         initialization();
@@ -52,15 +61,17 @@ public class AirfieldForm {
     }
 
     public void initialization() {
+        logger = LogManager.getLogger(AirfieldForm.class);
+        PropertyConfigurator.configure("src/com/company/log4j2.properties");
         queueTransport = new LinkedList<>();
         airfieldCollection = new AirfieldCollection(890, 525);
         drawAirfields = new DrawAirfields(airfieldCollection);
         borderTake = BorderFactory.createTitledBorder("Забрать транспорт");
-        borderAirfields = BorderFactory.createTitledBorder("Стоянки");
+        borderAirfields = BorderFactory.createTitledBorder("Аэродромы");
         parkTransport = new JButton("Припарковать транспорт");
         putTransportIntoQueue = new JButton("Поместить в список");
-        addAirfield = new JButton("Добавить стоянку");
-        deleteAirfield = new JButton("Удалить стоянку");
+        addAirfield = new JButton("Добавить аэродром");
+        deleteAirfield = new JButton("Удалить аэродром");
         placeTransport = new JTextField();
         countPlaceTransport = new JTextField();
         takeTransport = new JButton("Забрать из списка");
@@ -126,57 +137,67 @@ public class AirfieldForm {
         loadFile.addActionListener(e -> {
             loadFile();
         });
-        campFileMenu = new JMenu("Стоянка");
-        saveCamp = new JMenuItem("Сохранить");
-        saveCamp.addActionListener(e -> {
-            saveCamp();
+        airfieldFileMenu = new JMenu("Аэродром");
+        saveAirfield = new JMenuItem("Сохранить");
+        saveAirfield.addActionListener(e -> {
+            saveAirfield();
         });
-        loadCamp = new JMenuItem("Загрузить");
-        loadCamp.addActionListener(e -> {
-            loadCamp();
+        loadAirfield = new JMenuItem("Загрузить");
+        loadAirfield.addActionListener(e -> {
+            loadAirfield();
         });
         fileMenu.add(saveFile);
         fileMenu.add(loadFile);
-        campFileMenu.add(saveCamp);
-        campFileMenu.add(loadCamp);
+        airfieldFileMenu.add(saveAirfield);
+        airfieldFileMenu.add(loadAirfield);
         menuBar.add(fileMenu);
-        menuBar.add(campFileMenu);
+        menuBar.add(airfieldFileMenu);
     }
 
     private void createTransport() {
-        if (listBoxAirfields.getSelectedIndex() >= 0) {
+        if (listBoxAirfields.getSelectedValue() == null) {
+            JOptionPane.showMessageDialog(frame, "Аэродром не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
             PlaneConfigPanel configPanel = new PlaneConfigPanel(frame);
             ITransport transport = configPanel.getTransport();
-            if (transport != null) {
-                if (airfieldCollection.get(listBoxAirfields.getSelectedValue()).add(transport)) {
-                    frame.repaint();
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Аэродром переполнен");
-                }
+            if (transport == null) {
+                return;
             }
-        } else {
-            JOptionPane.showMessageDialog(frame, "Аэродром не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            if (airfieldCollection.get(listBoxAirfields.getSelectedValue()).add(transport)) {
+                logger.info("На аэродром " + listBoxAirfields.getSelectedValue() + " был добавлен транспорт " + transport);
+                frame.repaint();
+            }
+        } catch (AirfieldOverflowException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Переполнение", JOptionPane.ERROR_MESSAGE);
+            logger.warn(e.getMessage());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+            logger.fatal(e.getMessage());
         }
     }
 
     private void placeIntoQueueTransport() {
-        if (listBoxAirfields.getSelectedIndex() >= 0) {
-            if (!placeTransport.getText().equals("")) {
-                try {
-                    Plane transport = (Plane) airfieldCollection.get(listBoxAirfields.getSelectedValue()).delete(Integer.parseInt(placeTransport.getText()));
-                    if (transport != null) {
-                        queueTransport.add(transport);
-                        frame.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Не существующий транспорт", "Ошибка", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(frame, "Не существующий транспорт", "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        } else {
+        if (listBoxAirfields.getSelectedValue() == null) {
             JOptionPane.showMessageDialog(frame, "Аэродром не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        try {
+            ITransport transport = airfieldCollection.get(listBoxAirfields.getSelectedValue()).delete(Integer.parseInt(placeTransport.getText()));
+            if (transport != null) {
+                queueTransport.add((Plane) transport);
+                frame.repaint();
+                logger.info("С аэродрома " + listBoxAirfields.getSelectedValue() + " был изъят транспорт " + transport + " и помещен в коллекцию");
+            }
+        } catch (AirfieldNotFoundException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Не найдено", JOptionPane.ERROR_MESSAGE);
+            logger.warn(e.getMessage());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+            logger.fatal(e.getMessage());
+        }
+
     }
 
     private void reloadLevels() {
@@ -199,6 +220,7 @@ public class AirfieldForm {
         if (!airfieldsField.getText().equals("")) {
             airfieldCollection.addAirfield(airfieldsField.getText());
             reloadLevels();
+            logger.info("Добавлен аэродром " + airfieldsField.getText());
             frame.repaint();
         } else {
             JOptionPane.showMessageDialog(frame, "Введите название аэродрома", "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -211,6 +233,7 @@ public class AirfieldForm {
                     JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION) {
                 airfieldCollection.deleteAirfield(listBoxAirfields.getSelectedValue());
+                logger.info("Аэродром " + listBoxAirfields.getSelectedValue() + " удалена");
                 reloadLevels();
                 frame.repaint();
             }
@@ -239,10 +262,13 @@ public class AirfieldForm {
         fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         int result = fileSaveDialog.showSaveDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (airfieldCollection.saveData(fileSaveDialog.getSelectedFile().getPath())) {
-                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            try {
+                airfieldCollection.saveData(fileSaveDialog.getSelectedFile().getPath());
+                JOptionPane.showMessageDialog(frame, "Файл сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                logger.info("Данные сохранены в файл " + fileSaveDialog.getSelectedFile().getPath());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                logger.fatal(e.getMessage());
             }
         }
     }
@@ -252,44 +278,71 @@ public class AirfieldForm {
         fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         int result = fileOpenDialog.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (airfieldCollection.loadData(fileOpenDialog.getSelectedFile().getPath())) {
-                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                airfieldCollection.loadData(fileOpenDialog.getSelectedFile().getPath());
+                JOptionPane.showMessageDialog(frame, "Файл загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                logger.info("Данные были загружены из файла " + fileOpenDialog.getSelectedFile().getPath());
                 reloadLevels();
                 frame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (AirfieldOverflowException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Переполнение", JOptionPane.ERROR_MESSAGE);
+                logger.warn(e.getMessage());
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Файл не найден", JOptionPane.ERROR_MESSAGE);
+                logger.error(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Некорректные данные", JOptionPane.ERROR_MESSAGE);
+                logger.error(e.getMessage());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                logger.fatal(e.getMessage());
             }
         }
     }
 
-    private void saveCamp() {
+    private void saveAirfield() {
         JFileChooser fileSaveDialog = new JFileChooser();
         fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         if (listBoxAirfields.getSelectedValue() == null) {
-            JOptionPane.showMessageDialog(frame, "Выберите стоянку", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Выберите аэродром", "Ошибка", JOptionPane.ERROR_MESSAGE);
             return;
         }
         int result = fileSaveDialog.showSaveDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (airfieldCollection.saveCamp(fileSaveDialog.getSelectedFile().getPath(), listBoxAirfields.getSelectedValue())) {
-                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            try {
+                airfieldCollection.saveData(fileSaveDialog.getSelectedFile().getPath());
+                JOptionPane.showMessageDialog(frame, "Файл сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                logger.info("Данные сохранены в файл " + fileSaveDialog.getSelectedFile().getPath());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                logger.fatal(e.getMessage());
             }
         }
     }
 
-    private void loadCamp() {
+    private void loadAirfield() {
         JFileChooser fileOpenDialog = new JFileChooser();
         fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         int result = fileOpenDialog.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (airfieldCollection.loadCamp(fileOpenDialog.getSelectedFile().getPath())) {
-                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                airfieldCollection.loadData(fileOpenDialog.getSelectedFile().getPath());
+                JOptionPane.showMessageDialog(frame, "Файл загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                logger.info("Данные были загружены из файла " + fileOpenDialog.getSelectedFile().getPath());
                 reloadLevels();
                 frame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (AirfieldOverflowException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Переполнение", JOptionPane.ERROR_MESSAGE);
+                logger.warn(e.getMessage());
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Файл не найден", JOptionPane.ERROR_MESSAGE);
+                logger.error(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Некорректные данные", JOptionPane.ERROR_MESSAGE);
+                logger.error(e.getMessage());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                logger.fatal(e.getMessage());
             }
         }
     }

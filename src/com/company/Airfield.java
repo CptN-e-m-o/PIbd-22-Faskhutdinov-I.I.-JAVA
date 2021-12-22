@@ -27,21 +27,21 @@ public class Airfield<T extends ITransport, G extends IAdding> {
         places = new ArrayList<>();
     }
 
-    public boolean add(T vehicle) {
-        if (places.size() < maxCount) {
-            places.add(vehicle);
-            return true;
+    public boolean add(T vehicle) throws AirfieldOverflowException {
+        if (places.size() >= maxCount) {
+            throw new AirfieldOverflowException();
         }
-        return false;
+        places.add(vehicle);
+        return true;
     }
 
-    public T delete(int index) {
-        if (index >= 0 && index < maxCount && places.get(index) != null) {
-            T plane = places.get(index);
-            places.remove(index);
-            return plane;
+    public T delete(int index) throws AirfieldNotFoundException {
+        if (index < 0 || index >= places.size()) {
+            throw new AirfieldNotFoundException(index);
         }
-        return null;
+        T vehicle = places.get(index);
+        places.remove(index);
+        return vehicle;
     }
 
 
